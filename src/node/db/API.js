@@ -26,6 +26,7 @@ const chat = require('../chat');
 const padManager = require('./PadManager');
 const padMessageHandler = require('../handler/PadMessageHandler');
 const readOnlyManager = require('./ReadOnlyManager');
+const settings = require('../utils/Settings');
 const groupManager = require('./GroupManager');
 const authorManager = require('./AuthorManager');
 const sessionManager = require('./SessionManager');
@@ -305,6 +306,9 @@ Example returns:
 {code: 1, message:"padID does not exist", data: null}
 */
 exports.getChatHistory = async (padID, start, end) => {
+  if (!settings.enableIntegratedChat) {
+    throw new Error('integrated chat is disabled (see enableIntegratedChat in settings.json)');
+  }
   if (start && end) {
     if (start < 0) {
       throw new CustomError('start is below zero', 'apierror');
@@ -351,6 +355,9 @@ Example returns:
 {code: 1, message:"padID does not exist", data: null}
 */
 exports.appendChatMessage = async (padID, text, authorID, time) => {
+  if (!settings.enableIntegratedChat) {
+    throw new Error('integrated chat is disabled (see enableIntegratedChat in settings.json)');
+  }
   // text is required
   if (typeof text !== 'string') {
     throw new CustomError('text is not a string', 'apierror');
@@ -742,6 +749,9 @@ Example returns:
 {code: 1, message:"padID does not exist", data: null}
 */
 exports.getChatHead = async (padID) => {
+  if (!settings.enableIntegratedChat) {
+    throw new Error('integrated chat is disabled (see enableIntegratedChat in settings.json)');
+  }
   // get the pad
   const pad = await getPadSafe(padID, true);
   return {chatHead: pad.chatHead};

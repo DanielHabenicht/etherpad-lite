@@ -2,6 +2,7 @@
 
 const assert = require('assert').strict;
 const common = require('../../common');
+const settings = require('../../../../node/utils/Settings');
 
 let agent;
 const apiKey = common.apiKey;
@@ -13,7 +14,10 @@ const timestamp = Date.now();
 const endPoint = (point) => `/api/${apiVersion}/${point}?apikey=${apiKey}`;
 
 describe(__filename, function () {
+  const backups = {settings: {}};
+
   before(async function () {
+    backups.settings.enableIntegratedChat = settings.enableIntegratedChat;
     agent = await common.init();
     await agent.get('/api/')
         .expect(200)
@@ -37,7 +41,15 @@ describe(__filename, function () {
         });
   });
 
-  describe('message sequence', function () {
+  afterEach(async function () {
+    Object.assign(settings, backups.settings);
+  });
+
+  describe('settings.enableIntegratedChat = true', function () {
+    beforeEach(async function () {
+      settings.enableIntegratedChat = true;
+    });
+
     it('appendChatMessage', async function () {
       await agent.get(`${endPoint('appendChatMessage')}&padID=${padID}&text=blalblalbha` +
                 `&authorID=${authorID}&time=${timestamp}`)
@@ -65,6 +77,40 @@ describe(__filename, function () {
           .expect((res) => {
             assert.equal(res.body.code, 0);
             assert.equal(res.body.data.messages.length, 1);
+          });
+    });
+  });
+
+  describe('settings.enableIntegratedChat = false', function () {
+    beforeEach(async function () {
+      settings.enableIntegratedChat = false;
+    });
+
+    it('appendChatMessage returns an error', async function () {
+      await agent.get(`${endPoint('appendChatMessage')}&padID=${padID}&text=blalblalbha` +
+                `&authorID=${authorID}&time=${timestamp}`)
+          .expect(500)
+          .expect('Content-Type', /json/)
+          .expect((res) => {
+            assert.equal(res.body.code, 2);
+          });
+    });
+
+    it('getChatHead returns an error', async function () {
+      await agent.get(`${endPoint('getChatHead')}&padID=${padID}`)
+          .expect(500)
+          .expect('Content-Type', /json/)
+          .expect((res) => {
+            assert.equal(res.body.code, 2);
+          });
+    });
+
+    it('getChatHistory returns an error', async function () {
+      await agent.get(`${endPoint('getChatHistory')}&padID=${padID}`)
+          .expect(500)
+          .expect('Content-Type', /json/)
+          .expect((res) => {
+            assert.equal(res.body.code, 2);
           });
     });
   });
