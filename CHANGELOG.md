@@ -99,6 +99,9 @@
   * `newOp()`: Deprecated in favor of the new `Op` class.
 * The `AuthorManager.getAuthor4Token()` function is deprecated; use the new
   `AuthorManager.getAuthorId()` function instead.
+* The `sendChatMessageToPadClients()` function in
+  `src/node/handler/PadMessageHandler.js` is deprecated; use the same-named
+  function from `src/node/chat.js` instead.
 
 # 1.8.17
 

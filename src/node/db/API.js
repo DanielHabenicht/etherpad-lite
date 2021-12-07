@@ -22,6 +22,7 @@
 const Changeset = require('../../static/js/Changeset');
 const ChatMessage = require('../../static/js/ChatMessage');
 const CustomError = require('../utils/customError');
+const chat = require('../chat');
 const padManager = require('./PadManager');
 const padMessageHandler = require('../handler/PadMessageHandler');
 const readOnlyManager = require('./ReadOnlyManager');
@@ -363,7 +364,7 @@ exports.appendChatMessage = async (padID, text, authorID, time) => {
   // @TODO - missing getPadSafe() call ?
 
   // save chat message to database and send message to all connected clients
-  await padMessageHandler.sendChatMessageToPadClients(new ChatMessage(text, authorID, time), padID);
+  await chat.sendChatMessageToPadClients(new ChatMessage(text, authorID, time), padID);
 };
 
 /* ***************
