@@ -336,7 +336,7 @@ exports.getChatHistory = async (padID, start, end) => {
   }
 
   // the the whole message-log and return it to the client
-  const messages = await pad.getChatMessages(start, end);
+  const messages = await chat.getChatMessages(pad, start, end);
 
   return {messages};
 };
