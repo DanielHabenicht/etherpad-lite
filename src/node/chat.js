@@ -1,6 +1,7 @@
 'use strict';
 
 const ChatMessage = require('../static/js/ChatMessage');
+const assert = require('assert').strict;
 const authorManager = require('./db/AuthorManager');
 const hooks = require('../static/js/pluginfw/hooks.js');
 const pad = require('./db/Pad');
@@ -120,6 +121,24 @@ exports.handleMessage = async (hookName, {message, sessionInfo, socket}) => {
       return;
   }
   return null; // Important! Returning null (not undefined!) stops further processing.
+};
+
+exports.padCheck = async (hookName, {pad}) => {
+  assert(Number.isInteger(pad.chatHead));
+  assert(pad.chatHead >= -1);
+  let c;
+  try {
+    for (c = 0; c <= pad.chatHead; ++c) {
+      const msg = await getChatMessage(pad, c);
+      assert(msg != null);
+      assert(msg instanceof ChatMessage);
+    }
+  } catch (err) {
+    const pfx = `(pad ${pad.id} chat message ${c}) `;
+    if (err.stack) err.stack = pfx + err.stack;
+    err.message = pfx + err.message;
+    throw err;
+  }
 };
 
 exports.sendChatMessageToPadClients = async (message, padId) => {
