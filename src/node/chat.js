@@ -7,6 +7,8 @@ const padManager = require('./db/PadManager');
 
 let socketio;
 
+exports.clientVars = (hookName, {pad: {chatHead}}) => ({chatHead});
+
 exports.eejsBlock_mySettings = (hookName, context) => {
   context.content += `
     <p class="hide-for-mobile">
