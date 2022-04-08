@@ -141,6 +141,10 @@ exports.padCheck = async (hookName, {pad}) => {
   }
 };
 
+exports.padLoad = async (hookName, {pad}) => {
+  if (!('chatHead' in pad)) pad.chatHead = -1;
+};
+
 exports.sendChatMessageToPadClients = async (message, padId) => {
   const pad = await padManager.getPad(padId, null, message.authorId);
   await hooks.aCallAll('chatNewMessage', {message, pad, padId});
