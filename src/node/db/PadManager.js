@@ -126,9 +126,9 @@ exports.getPad = async (id, text, authorId = '') => {
 
   // initialize the pad
   await pad.init(text, authorId);
-  hooks.callAll('padLoad', {pad});
   globalPads.set(id, pad);
   padList.addPad(id);
+  await hooks.aCallAll('padLoad', {pad});
 
   return pad;
 };
